@@ -103,6 +103,7 @@ class ServerWindow
 class ServerCommunicateController
 {
 	private ServerWindow swGUI;
+	@SuppressWarnings("unused")
 	private boolean ConnectedState;
 	private ServerSocket serverSocket;
 	private DataInputStream dis;
@@ -240,7 +241,6 @@ class AL_Type implements ActionListener
 	}
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
 		String content=wdGUI.getInputArea();
 		
 		SCC.sendMessage(content);
@@ -251,20 +251,6 @@ class AL_Type implements ActionListener
 	
 }
 
-class SocketStreamUpdator implements Runnable
-{
-	
-	SocketStreamUpdator()
-	{
-		
-	}
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-}
 
 public class Server {
 	public static void main(String[] args)
@@ -304,7 +290,6 @@ public class Server {
 				SCC.closeServerSocket();
 				System.out.println("Close");
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				System.out.println(e.getMessage());
 			}
