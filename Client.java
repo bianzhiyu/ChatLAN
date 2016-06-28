@@ -26,7 +26,7 @@ class ClientWindow
 	private JButton ConnectSwitch;
 	ClientWindow()
 	{
-		Root=new JFrame("ComClient");
+		Root=new JFrame("Client");
 		Root.setLayout(null);
 		Root.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		Root.setSize(1500,1500);
@@ -144,6 +144,7 @@ class ClientWindow
 class ClientCommunicateController
 {
 	private boolean ConnectedState;
+	@SuppressWarnings("unused")
 	private ClientWindow wdGUI;
 	private Socket serverSocket;
 	private DataInputStream dis;
@@ -258,7 +259,7 @@ class AL_BN_ConnectSwitch implements ActionListener
 			}
 			catch(Exception exc)
 			{
-				wdGUI.setText(exc.getMessage());
+				wdGUI.setText("Error:"+exc.getMessage()+"\n");
 				return;
 			}
 			
@@ -268,7 +269,7 @@ class AL_BN_ConnectSwitch implements ActionListener
 			}
 			catch(UnknownHostException uhexc)
 			{
-				wdGUI.setText("UnknownHostException.");
+				wdGUI.setText("Error:UnknownHostException.\n");
 				return;
 			}
 			
@@ -277,9 +278,7 @@ class AL_BN_ConnectSwitch implements ActionListener
 			try {
 				s1=new Socket(ServerIP,ServerPort);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				//e.printStackTrace();
-				wdGUI.setText("Unable to Create Socket.");
+				wdGUI.setText("Error:Unable to Create Socket.\n");
 				return;
 			}
 			
@@ -292,12 +291,11 @@ class AL_BN_ConnectSwitch implements ActionListener
 				wdGUI.appendText("Connect to server!\n");
 				
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				CCC.setServerSocket(null);
 				CCC.setConnectedState(false);
 				wdGUI.setConnectText(true);
-				wdGUI.setText("Unable to open IOStream.");
+				wdGUI.setText("Error:Unable to open IOStream.\n");
 			}
 			
 			
@@ -315,25 +313,23 @@ class AL_BN_ConnectSwitch implements ActionListener
 			try {
 				CCC.sendTerminateInfoToServer();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
-				wdGUI.setText("Unable to send Terminate Info to Server.");
+				wdGUI.setText("Error:Unable to send Terminate Info to Server.\n");
 			}
 			
 			try {
 				CCC.closeIOStreamBySocket();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
-				wdGUI.setText("Unable to close IOStream.");
+				wdGUI.setText("Error:Unable to close IOStream.\n");
 			}
 			wdGUI.setConnectText(true);
 			CCC.setConnectedState(false);
 			try {
 				CCC.closeSocket();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				wdGUI.setText("Error:Unable to close socket.\n");
 			}
 			CCC.setServerSocket(null);
 			wdGUI.removeallInputFieldActinListener();
@@ -354,11 +350,11 @@ class AL_JTF_TextInputField implements ActionListener
 	}
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
 		String st=wdGUI.getInputContent();
 		if (st=="!?")
 		{
-			wdGUI.setText("Help doc");
+			wdGUI.setText("You can type in the text field below\n"
+					+ "Enter to send this line.\n");
 		}
 		else
 		{
@@ -375,9 +371,8 @@ class AL_JTF_TextInputField implements ActionListener
 					wdGUI.appendText("Disconnect to server!\n");
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
-				wdGUI.appendText("Error to send this info!"+"\n");
+				wdGUI.appendText("Error:Unable to send this info!\n");
 			}
 		}
 	}
@@ -396,25 +391,19 @@ class TextUpdator implements Runnable
 	}
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
 		while (CCC.getConnectedState())
 		{
-			//synchronized(CCC)
-			//{
-				//synchronized(wdGUI)
-				//{
-					String st="";
-					try {
-						st=CCC.readFlow();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						wdGUI.appendText("Read Flow error.\n"
-								+ "Quit recommanded.");
-					}
-					wdGUI.appendText("Server:"+st+"\n");
-				//}
-			//}
+
+			String st="";
+			try {
+				st=CCC.readFlow();
+			} catch (IOException e) {
+				e.printStackTrace();
+				wdGUI.appendText("Error:Read Flow error."
+						+ "Quit recommanded.\n");
+			}
+			wdGUI.appendText("Server:"+st+"\n");
+
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
